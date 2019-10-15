@@ -4,7 +4,8 @@ import { isElement } from 'react-is';
 import Row from './Row';
 import RowGroup from './RowGroup';
 import InteractionMasks from './masks/InteractionMasks';
-import { getColumnScrollPosition, isPositionStickySupported, getScrollbarSize } from './utils';
+import { isPositionStickySupported, getScrollbarSize } from './utils';
+import { getColumnScrollPosition, getRowTop } from './utils/gridUtils';
 import { EventTypes } from './common/enums';
 import { CalculatedColumn, Position, ScrollPosition, SubRowDetails, RowRenderer, RowRendererProps, RowData, ColumnMetrics, CellMetaData, InteractionMasksMetaData } from './common/types';
 import { ReactDataGridProps } from './ReactDataGrid';
@@ -117,7 +118,7 @@ export default function Canvas<R>({
     prevScrollToRowIndex.current = scrollToRowIndex;
     const { current } = canvas;
     if (typeof scrollToRowIndex === 'number' && current) {
-      current.scrollTop = scrollToRowIndex * rowHeight;
+      current.scrollTop = getRowTop(scrollToRowIndex, rowHeight);
     }
   }, [rowHeight, scrollToRowIndex]);
 
@@ -141,14 +142,14 @@ export default function Canvas<R>({
     const { current } = canvas;
     if (current) {
       // We do not need to check for the index being in range, as the scrollTop setter will adequately clamp the value.
-      current.scrollTop = (rowIdx + 1) * rowHeight - clientHeight;
+      current.scrollTop = getRowTop(rowIdx + 1, rowHeight) - clientHeight;
     }
   }
 
   function onHitTopCanvas({ rowIdx }: Position) {
     const { current } = canvas;
     if (current) {
-      current.scrollTop = rowIdx * rowHeight;
+      current.scrollTop = getRowTop(rowIdx, rowHeight);
     }
   }
 
@@ -161,6 +162,7 @@ export default function Canvas<R>({
     if (!current) return;
 
     const { scrollLeft, clientWidth } = current;
+    console.log(columns);
     const newScrollLeft = getColumnScrollPosition(columns, idx, scrollLeft, clientWidth);
     if (newScrollLeft !== 0) {
       current.scrollLeft = scrollLeft + newScrollLeft;
