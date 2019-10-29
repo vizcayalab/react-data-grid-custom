@@ -690,14 +690,14 @@ class ReactDataGrid extends React.Component {
 
   getHeaderRows = () => {
     const rows = [{ height: this.props.headerRowHeight || this.props.rowHeight, rowType: HeaderRowType.HEADER }];
-    if (this.state.canFilter === true) {
+    //if (this.state.canFilter === true) {
       rows.push({
         filterable: true,
         onFilterChange: this.props.onAddFilter,
         height: this.props.headerFiltersHeight,
         rowType: HeaderRowType.FILTER
       });
-    }
+   // }
     return rows;
   };
 
